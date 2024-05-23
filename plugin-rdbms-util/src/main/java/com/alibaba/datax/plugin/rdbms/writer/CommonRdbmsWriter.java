@@ -6,12 +6,15 @@ import com.alibaba.datax.common.exception.DataXException;
 import com.alibaba.datax.common.plugin.RecordReceiver;
 import com.alibaba.datax.common.plugin.TaskPluginCollector;
 import com.alibaba.datax.common.util.Configuration;
+import com.alibaba.datax.plugin.rdbms.sharding.DataSourceManager;
 import com.alibaba.datax.plugin.rdbms.util.DBUtil;
 import com.alibaba.datax.plugin.rdbms.util.DBUtilErrorCode;
 import com.alibaba.datax.plugin.rdbms.util.DataBaseType;
 import com.alibaba.datax.plugin.rdbms.util.RdbmsException;
 import com.alibaba.datax.plugin.rdbms.writer.util.OriginalConfPretreatmentUtil;
 import com.alibaba.datax.plugin.rdbms.writer.util.WriterUtil;
+
+import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Triple;
@@ -39,6 +42,8 @@ public class CommonRdbmsWriter {
         }
 
         public void init(Configuration originalConfig) {
+           // sharding jdbc数据源初始化
+            DataSourceManager.initDataSource(originalConfig);
             OriginalConfPretreatmentUtil.doPretreatment(originalConfig, this.dataBaseType);
 
             LOG.debug("After job init(), originalConfig now is:[\n{}\n]",
@@ -167,6 +172,7 @@ public class CommonRdbmsWriter {
         }
 
         public void destroy(Configuration originalConfig) {
+            DataSourceManager.closeDataSource();
         }
 
     }
@@ -436,14 +442,46 @@ public class CommonRdbmsWriter {
                             .asString());
                     break;
 
-                case Types.SMALLINT:
+                //----------- 修改了这里 2020-04-22
+                // shardng-jdbc  groovy.lang.MissingMethodException: No signature of method: java.lang.String.mod() is applicable for argument types: (java.lang.Integer) values: [2]
+                // 如果不改，datax默认使用String类型， sharding-proxy||sharding-jdbc会报错
                 case Types.INTEGER:
+                    Long iv=column.asLong();
+                    if(iv==null){
+                        preparedStatement.setString(columnIndex + 1, null);
+                    }else {
+                        preparedStatement.setInt(columnIndex + 1, iv.intValue());
+                    }
+                    break;
                 case Types.BIGINT:
-                case Types.NUMERIC:
+                    Long lv=column.asLong();
+                    if(lv==null){
+                        preparedStatement.setString(columnIndex + 1, null);
+                    }else {
+                        preparedStatement.setLong(columnIndex + 1, lv);
+                    }
+                    break;
                 case Types.DECIMAL:
-                case Types.FLOAT:
-                case Types.REAL:
+                    BigDecimal bgv=column.asBigDecimal();
+                    if(bgv==null){
+                        preparedStatement.setString(columnIndex + 1, null);
+                    }else {
+                        preparedStatement.setBigDecimal(columnIndex + 1, bgv);
+                    }
+                    break;
                 case Types.DOUBLE:
+                case Types.FLOAT:
+                    Double dv=column.asDouble();
+                    if(dv==null){
+                        preparedStatement.setString(columnIndex + 1, null);
+                    }else {
+                        preparedStatement.setDouble(columnIndex + 1, dv);
+                    }
+                    break;
+                // ----------
+                case Types.SMALLINT:
+                case Types.NUMERIC:
+                case Types.REAL:
                     String strValue = column.asString();
                     if (emptyAsNull && "".equals(strValue)) {
                         preparedStatement.setString(columnIndex + 1, null);
@@ -451,6 +489,22 @@ public class CommonRdbmsWriter {
                         preparedStatement.setString(columnIndex + 1, strValue);
                     }
                     break;
+
+//                case Types.SMALLINT:
+//                case Types.INTEGER:
+//                case Types.BIGINT:
+//                case Types.NUMERIC:
+//                case Types.DECIMAL:
+//                case Types.FLOAT:
+//                case Types.REAL:
+//                case Types.DOUBLE:
+//                    String strValue = column.asString();
+//                    if (emptyAsNull && "".equals(strValue)) {
+//                        preparedStatement.setString(columnIndex + 1, null);
+//                    } else {
+//                        preparedStatement.setString(columnIndex + 1, strValue);
+//                    }
+//                    break;
 
                 //tinyint is a little special in some database like mysql {boolean->tinyint(1)}
                 case Types.TINYINT:
@@ -464,11 +518,8 @@ public class CommonRdbmsWriter {
 
                 // for mysql bug, see http://bugs.mysql.com/bug.php?id=35115
                 case Types.DATE:
-                    if (typeName == null) {
-                        typeName = this.resultSetMetaData.getRight().get(columnIndex);
-                    }
-
-                    if (typeName.equalsIgnoreCase("year")) {
+                    if (this.resultSetMetaData.getRight().get(columnIndex)
+                            .equalsIgnoreCase("year")) {
                         if (column.asBigInteger() == null) {
                             preparedStatement.setString(columnIndex + 1, null);
                         } else {
@@ -530,7 +581,7 @@ public class CommonRdbmsWriter {
                     break;
 
                 case Types.BOOLEAN:
-                    preparedStatement.setBoolean(columnIndex + 1, column.asBoolean());
+                    preparedStatement.setString(columnIndex + 1, column.asString());
                     break;
 
                 // warn: bit(1) -> Types.BIT 可使用setBoolean
