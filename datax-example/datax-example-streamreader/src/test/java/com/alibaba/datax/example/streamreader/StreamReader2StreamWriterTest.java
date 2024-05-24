@@ -12,7 +12,7 @@ import org.junit.Test;
 public class StreamReader2StreamWriterTest {
     @Test
     public void testStreamReader2StreamWriter() {
-        String path = "/stream2stream.json";
+        String path = "/job-sharding.json";
         String jobPath = PathUtil.getAbsolutePathFromClassPath(path);
         ExampleContainer.start(jobPath);
     }
