@@ -39,6 +39,11 @@
         </dependency>
         <dependency>
             <groupId>com.alibaba.datax</groupId>
+            <artifactId>mysqlreader</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.datax</groupId>
             <artifactId>oraclereader</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
