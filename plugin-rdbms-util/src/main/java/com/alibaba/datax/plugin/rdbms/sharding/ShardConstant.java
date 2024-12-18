@@ -1,8 +1,7 @@
 package com.alibaba.datax.plugin.rdbms.sharding;
 
 /**
- * @author TimFruit
- * @date 20-4-22 下午9:38
+ * @author cunzhiwang
  */
 public interface ShardConstant {
 

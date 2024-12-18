@@ -1,20 +1,16 @@
 package com.alibaba.datax.plugin.sharding.util;
 
 
-
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Sets;
-
-import javax.sql.DataSource;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
+import javax.sql.DataSource;
 
 /**
- * Data source utility class.
- *
- * @author zhangliang
+ * @author cunzhiwang
  */
 public final class DataSourceUtil {
 
@@ -23,13 +19,13 @@ public final class DataSourceUtil {
     private static Collection<Class<?>> generalClassType;
 
     static {
-        generalClassType = Sets.<Class<?>>newHashSet(boolean.class, Boolean.class, int.class, Integer.class, long.class, Long.class, String.class);
+        generalClassType = Sets.newHashSet(boolean.class, Boolean.class, int.class, Integer.class, long.class, Long.class, String.class);
     }
 
     /**
      * Get data source.
      *
-     * @param dataSourceClassName data source class name
+     * @param dataSourceClassName  data source class name
      * @param dataSourceProperties data source properties
      * @return data source instance
      * @throws ReflectiveOperationException reflective operation exception
