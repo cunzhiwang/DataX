@@ -13,11 +13,6 @@ import org.slf4j.LoggerFactory;
  */
 public class AdapterShardingDataSourceFactory {
 
-    private static final Logger logger = LoggerFactory.getLogger(AdapterShardingDataSourceFactory.class);
-    private static final String shardingPrefix = "spring.shardingsphere";
-    private final static String dataSourcePrefix = "spring.shardingsphere.datasource.";
-
-
     /**
      * 根据配置文件获取sharding jdbc dataSource
      *

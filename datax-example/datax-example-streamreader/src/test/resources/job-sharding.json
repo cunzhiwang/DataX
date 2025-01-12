@@ -3,7 +3,7 @@
     "setting": {
       "speed": {
         "channelDescription": "配置channel，可以使用任务切分",
-        "channel": 5
+        "channel": 10
       },
       "errorLimit": {
         "record": 0,
@@ -58,7 +58,7 @@
             "session": [],
             "preSql": [],
             "shardingType": "shardingJdbc",
-            "shardingConfigPath": "\\sharding",
+            "shardingConfigPath": "DataX/datax-example/datax-example-streamreader/src/test/resources/sharding",
             "shardingWarning": "使用了sharding后,将使用shardingConfig (springboot配置格式 .yml)",
             "connection": [
               {

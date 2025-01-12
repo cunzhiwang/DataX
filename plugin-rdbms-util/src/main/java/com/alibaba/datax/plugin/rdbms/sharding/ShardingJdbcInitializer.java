@@ -42,18 +42,17 @@ public class ShardingJdbcInitializer {
         LOG.info("[" + ShardKey.SHARDING_CONFIG_PATH + "]值为{}", configPath);
 
 
-        File configDir = new File(configPath);
-//        if (configPath.startsWith("/")) {
-//            configDir = new File(configPath);
-//        } else {
-//            configDir = new File(DATAX_HOME + File.separator + configPath);
-//        }
+        File configDir;
+        if (configPath.startsWith("/")) {
+            configDir = new File(configPath);
+        } else {
+            configDir = new File(DATAX_HOME + File.separator + configPath);
+        }
         LOG.info("sharding配置路径:{}", configDir.getAbsolutePath());
 
 
         try {
-            DataSource dataSource = AdapterShardingDataSourceFactory.newInstance(configDir);
-            return dataSource;
+            return AdapterShardingDataSourceFactory.newInstance(configDir);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

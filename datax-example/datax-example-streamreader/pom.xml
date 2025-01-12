@@ -22,28 +22,7 @@
             <artifactId>datax-example-core</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>com.alibaba.datax</groupId>
-            <artifactId>streamreader</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>guava</artifactId>
-                    <groupId>com.google.guava</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba.datax</groupId>
-            <artifactId>streamwriter</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+
         <dependency>
             <groupId>com.alibaba.datax</groupId>
             <artifactId>mysqlwriter</artifactId>
@@ -54,11 +33,29 @@
             <artifactId>mysqlreader</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <!--添加slf4j-api-->
+        <!--解决java.lang.NoClassDefFoundError: org/slf4j/LoggerFactory-->
         <dependency>
-            <groupId>com.alibaba.datax</groupId>
-            <artifactId>oraclereader</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.30</version>
         </dependency>
+
+        <!--查看日志信息-->
+        <!--个人观点：不需要看日志信息的可以不添加slf4j-simple-->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.30</version>
+        </dependency>
+
+        <!--隐藏日志信息-->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>1.7.30</version>
+        </dependency>
+
     </dependencies>
 
 </project>

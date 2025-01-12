@@ -1,0 +1,52 @@
+dataSources:
+  ds_0:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    jdbcUrl: jdbc:mysql://localhost:3306/test?useSSL=false&useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: root
+  ds_1:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    jdbcUrl: jdbc:mysql://localhost:3306/test?useSSL=false&useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: root
+rules:
+  - !SHARDING
+    tables:
+      employees:
+        actualDataNodes: ds_${0..1}.employees_${0..3}
+        tableStrategy:
+          standard:
+            shardingColumn: emp_no
+            shardingAlgorithmName: employees_inline
+        keyGenerateStrategy:
+          column: emp_no
+          keyGeneratorName: snowflake
+
+    bindingTables:
+      - employees
+    defaultDatabaseStrategy:
+      standard:
+        shardingColumn: emp_no
+        shardingAlgorithmName: database_inline
+    shardingAlgorithms:
+      database_inline:
+        type: INLINE
+        props:
+          algorithm-expression: ds_${emp_no % 2}
+          allow-range-query-with-inline-sharding: true
+      employees_inline:
+        type: INLINE
+        props:
+          algorithm-expression: employees_${emp_no % 4}
+          allow-range-query-with-inline-sharding: true
+    keyGenerators:
+      snowflake:
+        type: SNOWFLAKE
+    auditors:
+      sharding_key_required_auditor:
+        type: DML_SHARDING_CONDITIONS
+
+props:
+  sql-show: true
